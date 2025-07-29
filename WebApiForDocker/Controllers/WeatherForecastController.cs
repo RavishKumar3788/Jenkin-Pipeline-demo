@@ -29,5 +29,11 @@ namespace WebApiForDocker.Controllers
             })
             .ToArray();
         }
+
+        [HttpGet(Name = "GetSomethingElse")]
+        public IActionResult GetSomethingElse()
+        {
+            return Ok("This is another endpoint that does something else.");
+        }
     }
 }
