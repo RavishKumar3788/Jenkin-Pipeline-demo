@@ -1,11 +1,30 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'mcr.microsoft.com/dotnet/sdk:8.0'
+        }
+    }
+
     stages {
-        stage('Docker Info') {
+        stage('Clone') {
             steps {
-                echo 'Gathering Docker information...'
-                sh 'docker version'
-                sh 'docker ps'
+                git branch: 'master',
+                    url: 'https://github.com/RavishKumar3788/Jenkin-Pipeline-demo.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'dotnet build WebApiForDocker.sln'
+            }
+        }
+        // stage('Test') {
+        //     steps {
+        //         sh 'dotnet test'
+        //     }
+        // }
+        stage('Publish') {
+            steps {
+                sh 'dotnet publish -c Release'
             }
         }
     }
