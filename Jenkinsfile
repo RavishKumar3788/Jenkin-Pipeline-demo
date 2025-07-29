@@ -1,35 +1,48 @@
 pipeline {
     agent any
 
+    environment {
+        ImageRepository = 'ravishchauhan/my-repo'
+        EC2_IP = '13.126.174.46'
+        DOCKER_COMPOSE_FILE = 'docker-compose.yml'
+        ENV_FILE = '.env'
+        DOCKER_IMAGE = "ravishchauhan/my-repo:latest"
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') // Jenkins secret
+    }
+
     stages {
-        stage('Run in Docker') {
+        stage('Build Docker Image') {
             steps {
-                sh '''#!/bin/bash
-                    docker run --rm -v "$PWD":/app -w /app mcr.microsoft.com/dotnet/sdk:8.0 bash -c "dotnet --version"
-                '''
+                script {
+                    echo "Building Docker image for ${ENV_FILE.ASPNETCORE_ENVIRONMENT} environment"
+                    sh "docker build -t ${ImageRepository}/${JOB_NAME}:${BUILD_NUMBER} ."
+                    sh "docker tag ${ImageRepository}/${JOB_NAME}:${BUILD_NUMBER} ${DOCKER_IMAGE}"
+                    echo "Docker image built: ${ImageRepository}/${JOB_NAME}:${BUILD_NUMBER}"
+                    sh "docker images"
+                }
             }
         }
-  
-        stage('Clone') {
-            steps {
-                git branch: 'master',
-                    url: 'https://github.com/RavishKumar3788/Jenkin-Pipeline-demo.git'
-            }
-        }
-        stage('Build') {
-            steps {
-                sh 'dotnet build WebApiForDocker.sln'
-            }
-        }
-        // stage('Test') {
+        // stage('Push Docker Image') {
         //     steps {
-        //         sh 'dotnet test'
+        //         script {
+                   
+        //             echo "Pushing Docker image to Docker Hub"
+        //             // Login to Docker Hub
+        //             withCredentials([usernamePassword(credentialsId: 'docker-login', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+        //                 sh "echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
+        //             }
+        //             docker.withRegistry('https://index.docker.io/v1/', env.DOCKERHUB_CREDENTIALS) {
+        //                 docker.image("${ImageRepository}/${JOB_NAME}:${BUILD_NUMBER}").push()
+        //             }
+        //         }
         //     }
         // }
-        stage('Publish') {
-            steps {
-                sh 'dotnet publish -c Release'
-            }
-        }
+        // stage('Deploy with Docker Compose') {
+        //     steps {
+        //         sh 'docker compose down || true'
+        //         sh "docker compose pull"
+        //         sh "docker compose up -d"
+        //     }
+        // }
     }
 }
