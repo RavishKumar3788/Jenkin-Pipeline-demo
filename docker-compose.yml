@@ -6,9 +6,16 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
+      - "8080:8080"
       - "80:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      DATABASE_CONNECTION_STRING: ${DATABASE_CONNECTION_STRING}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_AUDIENCE: ${JWT_AUDIENCE}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES}
+      REDIS_CONNECTION_STRING: ${REDIS_CONNECTION_STRING}
     # Uncomment the following lines if you want to mount local code for hot-reload (development only)
     # volumes:
     #   - ./WebApiForDocker:/app
