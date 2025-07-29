@@ -15,7 +15,7 @@ pipeline {
             steps {
                 script {
                     // build docker image with the help of docker compose file
-                    echo "Building Docker image for ${ENV_FILE.ASPNETCORE_ENVIRONMENT} environment"
+                    echo "Building Docker image for ${env.ASPNETCORE_ENVIRONMENT} environment"
                     sh "docker-compose -f ${DOCKER_COMPOSE_FILE} build"
                     sh "docker-compose -f ${DOCKER_COMPOSE_FILE} up -d"
                     
