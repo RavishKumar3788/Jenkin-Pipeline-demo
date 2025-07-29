@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     stages {
         stage('Run in Docker') {
             steps {
@@ -9,9 +9,7 @@ pipeline {
                 '''
             }
         }
-    }
-
-    stages {
+  
         stage('Clone') {
             steps {
                 git branch: 'master',
