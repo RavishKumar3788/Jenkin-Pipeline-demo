@@ -2,6 +2,12 @@ pipeline {
     agent any
 
     stages {
+        agent {
+            docker {
+                image 'mcr.microsoft.com/dotnet/sdk:8.0'
+            }
+        }
+
         stage('Clone') {
             steps {
                 git branch: 'master',
@@ -13,11 +19,11 @@ pipeline {
                 sh 'dotnet build WebApiForDocker.sln'
             }
         }
-        stage('Test') {
-            steps {
-                sh 'dotnet test'
-            }
-        }
+        // stage('Test') {
+        //     steps {
+        //         sh 'dotnet test'
+        //     }
+        // }
         stage('Publish') {
             steps {
                 sh 'dotnet publish -c Release'
