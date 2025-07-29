@@ -7,17 +7,21 @@ pipeline {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
         ENV_FILE = '.env'
         DOCKER_IMAGE = "ravishchauhan/my-repo:latest"
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') // Jenkins secret
+        //DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') // Jenkins secret
     }
 
     stages {
         stage('Build Docker Image') {
             steps {
                 script {
+                    // build docker image with the help of docker compose file
                     echo "Building Docker image for ${ENV_FILE.ASPNETCORE_ENVIRONMENT} environment"
-                    sh "docker build -t ${ImageRepository}/${JOB_NAME}:${BUILD_NUMBER} ."
-                    sh "docker tag ${ImageRepository}/${JOB_NAME}:${BUILD_NUMBER} ${DOCKER_IMAGE}"
-                    echo "Docker image built: ${ImageRepository}/${JOB_NAME}:${BUILD_NUMBER}"
+                    sh "docker-compose -f ${DOCKER_COMPOSE_FILE} build"
+                    sh "docker-compose -f ${DOCKER_COMPOSE_FILE} up -d"
+                    
+                    // sh "docker build -t ${ImageRepository}/${JOB_NAME}:${BUILD_NUMBER} ."
+                    // sh "docker tag ${ImageRepository}/${JOB_NAME}:${BUILD_NUMBER} ${DOCKER_IMAGE}"
+                    // echo "Docker image built: ${ImageRepository}/${JOB_NAME}:${BUILD_NUMBER}"
                     sh "docker images"
                 }
             }
